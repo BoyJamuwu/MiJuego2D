@@ -17,6 +17,11 @@ public class WarriorController : MonoBehaviour
     public float cooldownAtaque = 0.5f;
     private float tiempoSiguienteAtaque = 0f;
 
+    [Header("Detección de Suelo")]
+    public Transform checkSuelo;
+    public Vector2 tamanoCheck = new Vector2(0.4f, 0.1f);
+    public LayerMask capaSuelo;
+
     [Header("Efectos de Sonido y Volumen")]
     public AudioClip sonidoSalto;
     [Range(0f, 1f)] public float volumenSalto = 0.5f;
@@ -97,6 +102,9 @@ public class WarriorController : MonoBehaviour
 
     void FixedUpdate()
     {
+        bool tocandoSuelo = Physics2D.OverlapBox(checkSuelo.position, tamanoCheck, 0f, capaSuelo);
+        enElSuelo = tocandoSuelo && rb.velocity.y <= 0.01f;
+
         // Movimiento horizontal
         rb.velocity = new Vector2(movimientoX * velocidadActual, rb.velocity.y);
 
@@ -146,16 +154,4 @@ public class WarriorController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.contacts[0].normal.y > 0.5f)
-        {
-            enElSuelo = true;
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        enElSuelo = false;
-    }
 }
