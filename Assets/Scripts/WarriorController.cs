@@ -22,6 +22,9 @@ public class WarriorController : MonoBehaviour
     public Vector2 tamanoCheck = new Vector2(0.4f, 0.1f);
     public LayerMask capaSuelo;
 
+    [Header("Límite de Caída")]
+    public float limiteCaidaY = -6f;
+
     [Header("Efectos de Sonido y Volumen")]
     public AudioClip sonidoSalto;
     [Range(0f, 1f)] public float volumenSalto = 0.5f;
@@ -58,6 +61,12 @@ public class WarriorController : MonoBehaviour
 
     void Update()
     {
+        if (transform.position.y < limiteCaidaY)
+        {
+            GameManager.Instance.GameOver();
+            return;
+        }
+
         // 1. Leer movimiento horizontal
         movimientoX = Input.GetAxisRaw("Horizontal");
 
@@ -152,6 +161,15 @@ public class WarriorController : MonoBehaviour
             audioEfectos.pitch = Random.Range(0.95f, 1.05f);
             audioEfectos.PlayOneShot(clip, volumen);
         }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (checkSuelo != null)
+            Gizmos.DrawWireCube(checkSuelo.position, tamanoCheck);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(new Vector3(-500f, limiteCaidaY, 0f), new Vector3(500f, limiteCaidaY, 0f));
     }
 
 }
